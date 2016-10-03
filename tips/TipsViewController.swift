@@ -11,7 +11,7 @@ import UIKit
 
 class TipsViewController: UIViewController {
     
-    let REMEMBER_DURATION = 1 // 10 mins
+    let REMEMBER_DURATION = 600 // 10 mins
     
     var controlsDisplayed = false
     var isFirstLoad = true
@@ -140,6 +140,7 @@ class TipsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         appDelegate.applicationWillTerminateDelegate = self
         billField.delegate = self
@@ -151,6 +152,8 @@ class TipsViewController: UIViewController {
         loadRememberedTipState()
         if !isLoadFromRememberedState {
             hideControls()
+        } else {
+            controlsDisplayed = true // load controls' value from remembered state => controls already displayed & had values
         }
     }
     
