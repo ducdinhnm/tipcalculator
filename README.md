@@ -15,12 +15,11 @@ The following **required** functionality is complete:
 * [x] Settings page to change the default tip percentage.
 
 The following **optional** features are implemented:
-* [x] Remember the bill amount across app restarts. After an extended period of time, clear the state. This is a UI trick that Apple uses with the Spotlight app. If you return there a minute later, it will show your most recent search. if you return 10 minutes later, it defaults to blank. To implement this, plug into the application lifecycle and track time using NSDate.
-* [x] Use locale specific currency and currency thousands separator.
-* [x] Add a light/dark color theme to the settings view. In viewWillAppear, update views with the correct theme colors.
+* [] UI animations
+* [x] Remembering the bill amount across app restarts (if <10mins)
+* [x] Using locale-specific currency and currency thousands separators.
+* [x] Add a light/dark color theme to the settings view.
 * [x] Make sure the keyboard is always visible and the bill amount is always the first responder. This way the user doesn't have to tap anywhere to use this app. Just launch the app and start typing.
-* [] Add animations to your UI
-* [x] The Tip calculator has a very primitive UI. Feel free to play with colors, layout, or even modify the UI to improve it.
 
 ## Video Walkthrough 
 
