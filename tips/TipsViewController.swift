@@ -11,12 +11,12 @@ import UIKit
 
 class TipsViewController: UIViewController {
     
-    let REMEMBER_DURATION = 600 // 10 mins
+    let REMEMBER_DURATION = 1 // 10 mins
     
+    var controlsDisplayed = false
     var isFirstLoad = true
     var isLoadFromRememberedState = false
     let fmt = NSNumberFormatter()
-//    var tipPercentages = [Double]()
 
     // IBOutlets
     @IBOutlet weak var billField: UITextField!
@@ -30,6 +30,7 @@ class TipsViewController: UIViewController {
     
     // IBActions
     @IBAction func onBillFieldEditingChanged(sender: AnyObject) {
+        displayControls()
         updateValues()
     }
     
@@ -41,11 +42,40 @@ class TipsViewController: UIViewController {
         updateValues()
     }
     
+    func setControlsVisibility(hidden: Bool) {
+        let alpha = hidden ? 0 : 1
+        self.tipAmountLabel.alpha = CGFloat(alpha)
+        self.totalLabel.alpha = CGFloat(alpha)
+        self.minTipLabel.alpha = CGFloat(alpha)
+        self.maxTipLabel.alpha = CGFloat(alpha)
+        self.tipSlider.alpha = CGFloat(alpha)
+        self.equalSignLabel.alpha = CGFloat(alpha)
+        self.plusSignLabel.alpha = CGFloat(alpha)
+    }
+
+    func hideControls() {
+        self.setControlsVisibility(true)
+        UIView.animateWithDuration(1, animations: {
+            self.billField.frame.origin.y += 120
+        })
+    }
+
+    func displayControls() {
+        if !controlsDisplayed {
+            UIView.animateWithDuration(0.5, animations: {
+                self.billField.frame.origin.y -= 120
+            })
+            UIView.animateWithDuration(2, animations: {
+                self.setControlsVisibility(false)
+            })
+            controlsDisplayed = true
+        }
+    }
     
     func updateValues() {
         let convertedAmount = NSNumberFormatter().numberFromString(billField.text!)
         if convertedAmount != nil {
-            let tipPercentage = floor(self.tipSlider.value) // floor it because value of tipSlider could be double value with some decimal places
+            let tipPercentage = floor(tipSlider.value) // floor it because value of tipSlider could be double value with some decimal places
             
             let billAmount = Double(convertedAmount!)
             let tip = billAmount * Double(tipPercentage / 100)
@@ -62,17 +92,17 @@ class TipsViewController: UIViewController {
     
     func changeTheme(isDark: Bool) {
         self.view.backgroundColor = isDark ? UIColor.darkGrayColor() : UIColor.lightGrayColor()
-        self.billField.textColor = isDark ? UIColor.whiteColor() : UIColor.blackColor()
-        self.billField.attributedPlaceholder = isDark ? NSAttributedString(string: fmt.currencySymbol, attributes: [NSForegroundColorAttributeName : UIColor(white: 1, alpha: 0.2)]) :
+        billField.textColor = isDark ? UIColor.whiteColor() : UIColor.blackColor()
+        billField.attributedPlaceholder = isDark ? NSAttributedString(string: fmt.currencySymbol, attributes: [NSForegroundColorAttributeName : UIColor(white: 1, alpha: 0.2)]) :
             NSAttributedString(string: fmt.currencySymbol, attributes: [NSForegroundColorAttributeName : UIColor(white: 0, alpha: 0.2)])
-        self.maxTipLabel.textColor = isDark ? UIColor.whiteColor() : UIColor.blackColor()
-        self.minTipLabel.textColor = isDark ? UIColor.whiteColor() : UIColor.blackColor()
-        self.tipAmountLabel.textColor = isDark ? UIColor.whiteColor() : UIColor.blackColor()
-        self.totalLabel.textColor = isDark ? UIColor.whiteColor() : UIColor.blackColor()
-        self.tipSlider.thumbTintColor = isDark ? UIColor.whiteColor() : UIColor.blackColor()
-        self.tipSlider.tintColor = isDark ? UIColor.whiteColor() : UIColor.blackColor()
-        self.plusSignLabel.textColor = isDark ? UIColor.whiteColor() : UIColor.blackColor()
-        self.equalSignLabel.textColor = isDark ? UIColor.whiteColor() : UIColor.blackColor()
+        maxTipLabel.textColor = isDark ? UIColor.whiteColor() : UIColor.blackColor()
+        minTipLabel.textColor = isDark ? UIColor.whiteColor() : UIColor.blackColor()
+        tipAmountLabel.textColor = isDark ? UIColor.whiteColor() : UIColor.blackColor()
+        totalLabel.textColor = isDark ? UIColor.whiteColor() : UIColor.blackColor()
+        tipSlider.thumbTintColor = isDark ? UIColor.whiteColor() : UIColor.blackColor()
+        tipSlider.tintColor = isDark ? UIColor.whiteColor() : UIColor.blackColor()
+        plusSignLabel.textColor = isDark ? UIColor.whiteColor() : UIColor.blackColor()
+        equalSignLabel.textColor = isDark ? UIColor.whiteColor() : UIColor.blackColor()
     }
     
     func loadRememberedTipState() {
@@ -120,8 +150,7 @@ class TipsViewController: UIViewController {
         
         loadRememberedTipState()
         if !isLoadFromRememberedState {
-            tipAmountLabel.text = fmt.currencySymbol + "0.00"
-            totalLabel.text = fmt.currencySymbol + "0.00"
+            hideControls()
         }
     }
     
@@ -138,9 +167,9 @@ class TipsViewController: UIViewController {
         let maxPercentage = SettingSection.getSettingItemByKey(percentageSettings, key: "maxPercentage")
         tipSlider.minimumValue = Float(minPercentage)
         tipSlider.maximumValue = Float(maxPercentage)
-        if self.isFirstLoad && !isLoadFromRememberedState { // setting slider's value always comes after min & max
+        if isFirstLoad && !isLoadFromRememberedState { // setting slider's value always comes after min & max
             let selectedPercentage = SettingSection.getSettingItemByKey(percentageSettings, key: "defaultPercentage")
-            self.tipSlider.value = Float(selectedPercentage)
+            tipSlider.value = Float(selectedPercentage)
             isFirstLoad = false
         }
         minTipLabel.text = String(format: "%d", minPercentage) + "%"
